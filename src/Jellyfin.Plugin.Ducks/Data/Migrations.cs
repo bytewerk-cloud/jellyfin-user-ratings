@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 
 namespace Jellyfin.Plugin.Ducks.Data;
 
@@ -50,7 +51,13 @@ internal static class Migrations
         """
     ];
 
-    public static void Apply(DucksRepository repository)
+    public static void Apply(DucksRepository repository) => Apply(repository, Steps);
+
+    /// <summary>
+    /// Applies pending steps. Before changing an existing database, a full copy is written to
+    /// backups/ducks.pre-v{N}.db so a failed or unwanted upgrade can always be undone.
+    /// </summary>
+    internal static void Apply(DucksRepository repository, IReadOnlyList<string> steps)
     {
         using var connection = repository.Open();
         using (var create = connection.CreateCommand())
@@ -66,18 +73,24 @@ internal static class Migrations
             current = Convert.ToInt32(read.ExecuteScalar(), CultureInfo.InvariantCulture);
         }
 
-        if (current > Steps.Count)
+        if (current > steps.Count)
         {
             throw new InvalidOperationException(
-                $"Ducks database schema v{current} is newer than this plugin supports (v{Steps.Count}). Update the plugin; the database was not modified.");
+                $"Ducks database schema v{current} is newer than this plugin supports (v{steps.Count}). Update the plugin; the database was not modified.");
         }
 
-        for (var v = current + 1; v <= Steps.Count; v++)
+        if (current > 0 && current < steps.Count)
+        {
+            var backup = Path.Combine(Path.GetDirectoryName(repository.DatabasePath)!, "backups", $"ducks.pre-v{steps.Count}.db");
+            repository.BackupTo(backup);
+        }
+
+        for (var v = current + 1; v <= steps.Count; v++)
         {
             using var tx = connection.BeginTransaction();
             using var step = connection.CreateCommand();
             step.Transaction = tx;
-            step.CommandText = Steps[v - 1];
+            step.CommandText = steps[v - 1];
             step.ExecuteNonQuery();
             using var mark = connection.CreateCommand();
             mark.Transaction = tx;

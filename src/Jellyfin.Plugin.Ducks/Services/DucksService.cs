@@ -200,6 +200,29 @@ public sealed class DucksService
     }
 
     /// <summary>
+    /// Writes backups/ducks-yyyyMMdd.db (one per day, replaced if run again) and keeps the newest <paramref name="keep"/>.
+    /// Returns the path written.
+    /// </summary>
+    public string CreateBackup(DateTime nowUtc, int keep)
+    {
+        var folder = Path.Combine(DataDirectory, "backups");
+        var path = Path.Combine(folder, "ducks-" + nowUtc.ToString("yyyyMMdd", CultureInfo.InvariantCulture) + ".db");
+        Repository.BackupTo(path);
+
+        // Names sort by date, so ordinal order is chronological.
+        var old = Directory.GetFiles(folder, "ducks-????????.db")
+            .OrderByDescending(f => Path.GetFileName(f), StringComparer.Ordinal)
+            .Skip(Math.Max(1, keep));
+        foreach (var file in old)
+        {
+            File.Delete(file);
+        }
+
+        _logger.LogInformation("Ducks backup written to {Path}", path);
+        return path;
+    }
+
+    /// <summary>
     /// Finds reviews whose item id no longer exists and moves them to a matching item (same provider ids or path).
     /// Returns the number of rows moved.
     /// </summary>

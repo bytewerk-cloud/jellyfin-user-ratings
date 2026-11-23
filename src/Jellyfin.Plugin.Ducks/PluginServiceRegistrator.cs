@@ -15,5 +15,6 @@ public class PluginServiceRegistrator : IPluginServiceRegistrator
     {
         serviceCollection.AddSingleton<DucksService>();
         serviceCollection.AddHostedService<WebInjectionService>();
+        serviceCollection.AddHostedService<LibraryWatcher>();
     }
 }

@@ -54,5 +54,6 @@ public class PluginTests
 
         Assert.Contains(services, d => d.ServiceType == typeof(DucksService) && d.Lifetime == ServiceLifetime.Singleton);
         Assert.Contains(services, d => d.ServiceType == typeof(IHostedService) && d.ImplementationType == typeof(WebInjectionService));
+        Assert.Contains(services, d => d.ServiceType == typeof(IHostedService) && d.ImplementationType == typeof(LibraryWatcher));
     }
 }

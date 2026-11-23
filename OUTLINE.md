@@ -62,7 +62,9 @@ Item types: Movie, Series, Season, Episode, plus anything else with a detail pag
   - `SchemaVersion(Version)` — forward-only migrations run on plugin start.
 - **Mirror to Jellyfin:** on save, also set `UserItemData.Rating` = ducks × 2.5 (Jellyfin uses 0–10). Gives other clients/API consumers the value for free and is a second copy of the number. Mirror is write-only; plugin DB wins on conflict.
 - **Item identity across rescans:** Jellyfin item IDs can change if a library is removed/re-added. Store provider IDs (IMDb/TMDb/TVDb) + path alongside `ItemId` so orphaned rows can be re-linked by a scheduled task (Phase 6).
-- **Backups:** daily scheduled task writes `ducks-YYYYMMDD.db` copies (keep last 7) next to the DB. Export/import JSON endpoint for admins.
+- **Backups:** daily scheduled task writes `backups/ducks-YYYYMMDD.db` (keep last N, default 7). Before any schema upgrade a full copy goes to `backups/ducks.pre-vN.db`. Admin JSON export/import at `/Ducks/Export`, `/Ducks/Import`.
+- **Re-linking:** `LibraryWatcher` runs the relink 30 s after the library stops adding items; the "Re-link orphaned ratings" task also runs at startup and daily.
+- **Verified on the 12.4 test server (2026-11-23):** container recreate (= server update), plugin 0.1 → 0.2, plugin uninstall + reinstall, and moving a rated movie's folder (ratings followed via IMDb id, both directions) — no data lost.
 
 ### 3.2 Server API (all require an authenticated user)
 
@@ -133,7 +135,7 @@ jellyfin-ratings/
 | 4 | Script injection + detail-page widget (F1–F4) | ✅ done |
 | 5 | Card badges (F5) | ✅ done |
 | 6 | Reviews tab + feed page (F6–F7) | ✅ done |
-| 7 | Durability: backups, orphan relink, upgrade test (12.4 → next) (F9) | ~2 h |
+| 7 | Durability: backups, orphan relink, upgrade test (12.4 → next) (F9) | ✅ done |
 | 8 | Packaging: `build.yaml`, repository manifest JSON for install via plugin catalog, README | ~1 h |
 
 ## 6. Open questions
