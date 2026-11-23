@@ -121,7 +121,7 @@ jellyfin-ratings/
 | 0 | Repo + this outline + answers to open questions | ✅ done |
 | 1 | Plugin skeleton builds against 12.4, loads in Docker test server | ✅ done |
 | 2 | SQLite repository + migrations + unit tests | ✅ done |
-| 3 | REST API + auth/access filtering + UserData mirror | ~2 h |
+| 3 | REST API + auth/access filtering + UserData mirror | ✅ done |
 | 4 | Script injection + detail-page widget (F1–F4) | ~3 h |
 | 5 | Card badges (F5) | ~2 h |
 | 6 | Reviews tab + feed page (F6–F7) | ~2 h |
