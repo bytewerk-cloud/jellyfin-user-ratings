@@ -82,7 +82,7 @@ jellyfin-web has no official extension point. Options:
 2. **Rewrite `index.html` on disk at plugin startup.** No dependency, but needs write access to the web dir (fails in read-only Docker images) and is undone by every server update until next restart.
 3. **Middleware in our plugin** that rewrites `index.html` responses. No dependency, survives updates, but relies on internal ASP.NET pipeline hooks that may break between Jellyfin versions.
 
-Leaning: **1**, with 3 as fallback. → open question Q1.
+**Decided: 1** (File Transformation plugin). Option 3 stays the fallback if that plugin stops being maintained.
 
 Client script responsibilities:
 - Detect route changes (`viewshow` event / hash change) and act on the item detail page.
@@ -115,7 +115,7 @@ jellyfin-ratings/
 
 | Phase | Deliverable | Est. |
 |-------|-------------|------|
-| 0 | Repo + this outline + answers to open questions | done / waiting on Q's |
+| 0 | Repo + this outline + answers to open questions | ✅ done |
 | 1 | Plugin skeleton builds against 12.4, loads in Docker test server | ~1 h |
 | 2 | SQLite repository + migrations + unit tests | ~2 h |
 | 3 | REST API + auth/access filtering + UserData mirror | ~2 h |
@@ -127,12 +127,8 @@ jellyfin-ratings/
 
 ## 6. Open questions
 
-- **Q1** Web injection: OK to require the File Transformation plugin? (see 3.3)
-- **Q2** Reviews feed visibility: all users see everyone's reviews, with usernames? Or option to hide names?
-- **Q3** Should ratings on episodes/seasons roll up into the series aggregate, or stay separate per item?
-- **Q4** Can a rating of exactly 0 ducks be given (distinct from "not rated")? Assumed yes.
-- **Q5** Feed: show only reviews with text, or every rating too? Show edit history or only latest version?
-- **Q6** Install method: plugin repository URL (needs hosting, e.g. GitHub Pages) or manual zip drop-in?
+- **Q2** Reviews feed visibility: assumed all users see everyone's reviews with usernames. Admin toggle to hide names later?
+- **Q4** Assumed a rating of exactly 0 ducks is allowed and distinct from "not rated".
 
 ## 7. Decisions log
 
@@ -140,3 +136,7 @@ jellyfin-ratings/
 |------|----------|
 | 2026-11-23 | Target Jellyfin 12.4 / .NET 10 |
 | 2026-11-23 | Plugin-owned SQLite in `DataPath` is source of truth; mirror to `UserItemData.Rating` |
+| 2026-11-23 | Script injection via File Transformation plugin (declared dependency) |
+| 2026-11-23 | Aggregates are per item; no roll-up from episodes/seasons into series |
+| 2026-11-23 | Feed shows every rating, newest first; text shown when present; edits update the entry (marked "edited"), not new entries |
+| 2026-11-23 | Distribution via GitHub-hosted plugin repository manifest (GitHub Releases + Pages) |
