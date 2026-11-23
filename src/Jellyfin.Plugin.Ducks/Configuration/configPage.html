@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Ducks</title>
+</head>
+<body>
+    <div id="DucksConfigPage" data-role="page" class="page type-interior pluginConfigurationPage" data-require="emby-input,emby-button">
+        <div data-role="content">
+            <div class="content-primary">
+                <form id="DucksConfigForm">
+                    <div class="inputContainer">
+                        <input is="emby-input" type="number" id="MaxTitleLength" min="1" max="500" label="Max review title length" />
+                    </div>
+                    <div class="inputContainer">
+                        <input is="emby-input" type="number" id="MaxBodyLength" min="1" max="20000" label="Max review body length" />
+                    </div>
+                    <div class="inputContainer">
+                        <input is="emby-input" type="number" id="BackupsToKeep" min="1" max="365" label="Daily database backups to keep" />
+                    </div>
+                    <button is="emby-button" type="submit" class="raised button-submit block emby-button"><span>Save</span></button>
+                </form>
+            </div>
+        </div>
+        <script type="text/javascript">
+            var DucksConfig = { pluginUniqueId: '6f3c2b1e-8d4a-4c7e-9b2f-d0c5a1e4f7b3' };
+            var fields = ['MaxTitleLength', 'MaxBodyLength', 'BackupsToKeep'];
+
+            document.querySelector('#DucksConfigPage').addEventListener('pageshow', function () {
+                Dashboard.showLoadingMsg();
+                ApiClient.getPluginConfiguration(DucksConfig.pluginUniqueId).then(function (config) {
+                    fields.forEach(function (f) { document.querySelector('#' + f).value = config[f]; });
+                    Dashboard.hideLoadingMsg();
+                });
+            });
+
+            document.querySelector('#DucksConfigForm').addEventListener('submit', function (e) {
+                Dashboard.showLoadingMsg();
+                ApiClient.getPluginConfiguration(DucksConfig.pluginUniqueId).then(function (config) {
+                    fields.forEach(function (f) { config[f] = parseInt(document.querySelector('#' + f).value, 10); });
+                    ApiClient.updatePluginConfiguration(DucksConfig.pluginUniqueId, config).then(function (result) {
+                        Dashboard.processPluginConfigurationUpdateResult(result);
+                    });
+                });
+                e.preventDefault();
+                return false;
+            });
+        </script>
+    </div>
+</body>
+</html>

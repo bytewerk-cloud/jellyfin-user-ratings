@@ -25,8 +25,11 @@ Item types: Movie, Series, Season, Episode, plus anything else with a detail pag
 - **Jellyfin 12.4** (Oct 2026). Versioning went 10.11.x → 12.0; 12.x requires plugins rebuilt against the 12.x packages.
 - **.NET 10** (12.4 ships on .NET 10.0.14).
 - NuGet: `Jellyfin.Controller` / `Jellyfin.Model` pinned to `12.4.*`, `targetAbi` `12.4.0.0` in `meta.json`/`build.yaml`.
-- Local dev box currently has **no `dotnet` SDK** → install .NET 10 SDK (`brew install --cask dotnet-sdk`) before Phase 1.
-- Test server: Docker `jellyfin/jellyfin:12.4` with a throwaway config volume and a few sample media files.
+- No local .NET SDK needed: `./build.sh` builds inside `mcr.microsoft.com/dotnet/sdk:10.0` → `artifacts/Ducks/`.
+- Test server: `docker compose -f docker/compose.yml up -d` → http://localhost:8096 (image `jellyfin/jellyfin:12.4`; Docker tags are `12.4`, not `12.4.0`).
+  - Dev login: `admin` / `ducks`. Put sample media in `docker/media/movies/` (gitignored).
+  - Plugin folder must be mounted **read-write**: Jellyfin writes `meta.json` into it and fails startup otherwise.
+  - After `./build.sh`: `docker restart ducks-jellyfin`.
 
 ## 3. Architecture
 
@@ -116,7 +119,7 @@ jellyfin-ratings/
 | Phase | Deliverable | Est. |
 |-------|-------------|------|
 | 0 | Repo + this outline + answers to open questions | ✅ done |
-| 1 | Plugin skeleton builds against 12.4, loads in Docker test server | ~1 h |
+| 1 | Plugin skeleton builds against 12.4, loads in Docker test server | ✅ done |
 | 2 | SQLite repository + migrations + unit tests | ~2 h |
 | 3 | REST API + auth/access filtering + UserData mirror | ~2 h |
 | 4 | Script injection + detail-page widget (F1–F4) | ~3 h |

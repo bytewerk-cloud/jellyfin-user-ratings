@@ -1,0 +1,14 @@
+# Local Jellyfin 12.4 test server. Plugin DLL is mounted from ../artifacts/Ducks.
+# Start: docker compose -f docker/compose.yml up -d   → http://localhost:8096
+services:
+  jellyfin:
+    image: jellyfin/jellyfin:12.4
+    container_name: ducks-jellyfin
+    ports:
+      - "8096:8096"
+    volumes:
+      - ./config:/config
+      - ./cache:/cache
+      - ./media:/media:ro
+      - ../artifacts/Ducks:/config/plugins/Ducks
+    restart: "no"

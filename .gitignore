@@ -1,0 +1,8 @@
+bin/
+obj/
+artifacts/
+docker/config/
+docker/cache/
+.vs/
+*.user
+docker/media/
