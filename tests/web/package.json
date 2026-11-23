@@ -1,0 +1,11 @@
+{
+  "name": "ducks-web-tests",
+  "private": true,
+  "description": "Unit tests for the Ducks jellyfin-web client (src/Jellyfin.Plugin.Ducks/Web/ducks.js)",
+  "scripts": {
+    "test": "node --test --experimental-test-coverage --test-coverage-include=../../src/Jellyfin.Plugin.Ducks/Web/ducks.js --test-coverage-lines=100 --test-coverage-functions=100 --test-coverage-branches=99 *.test.js"
+  },
+  "devDependencies": {
+    "jsdom": "27.0.0"
+  }
+}

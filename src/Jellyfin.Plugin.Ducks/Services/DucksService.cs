@@ -56,12 +56,25 @@ public sealed class DucksService
     private static Configuration.PluginConfiguration Config => Plugin.Instance?.Configuration ?? new Configuration.PluginConfiguration();
 
     /// <summary>
-    /// Returns the item if it exists and <paramref name="userId"/> may see it.
+    /// Item types that are containers or metadata, not media, and so can't be rated.
+    /// </summary>
+    private static readonly HashSet<string> NonRatableTypes = new(StringComparer.Ordinal)
+    {
+        "AggregateFolder", "BasePluginFolder", "Channel", "CollectionFolder", "Folder", "Genre", "LiveTvChannel",
+        "ManualPlaylistsFolder", "MusicGenre", "Person", "Playlist", "PlaylistsFolder", "Studio", "UserRootFolder",
+        "UserView", "Year"
+    };
+
+    public static bool IsRatable(BaseItem item) => !NonRatableTypes.Contains(item.GetType().Name);
+
+    /// <summary>
+    /// Returns the item if it exists, <paramref name="userId"/> may see it, and it is a ratable media item.
     /// </summary>
     public BaseItem? GetVisibleItem(Guid userId, Guid itemId)
     {
         var user = _userManager.GetUserById(userId);
-        return user is null ? null : _libraryManager.GetItemById<BaseItem>(itemId, user);
+        var item = user is null ? null : _libraryManager.GetItemById<BaseItem>(itemId, user);
+        return item is not null && IsRatable(item) ? item : null;
     }
 
     public ItemRatingDto GetItemRating(Guid userId, Guid itemId)

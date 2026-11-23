@@ -38,6 +38,19 @@ public sealed class ServiceTests : IDisposable
     }
 
     [Fact]
+    public void Folders_people_and_genres_are_not_ratable()
+    {
+        var folder = _f.AddItem(new Folder { Id = Guid.NewGuid() });
+        var person = _f.AddItem(new Person { Id = Guid.NewGuid() });
+        var series = _f.AddItem(new Series { Id = Guid.NewGuid() });
+
+        Assert.Null(_f.Service.GetVisibleItem(_f.Alice.Id, folder.Id));
+        Assert.Null(_f.Service.GetVisibleItem(_f.Alice.Id, person.Id));
+        Assert.Same(series, _f.Service.GetVisibleItem(_f.Alice.Id, series.Id));
+        Assert.True(Jellyfin.Plugin.Ducks.Services.DucksService.IsRatable(new BoxSet()));
+    }
+
+    [Fact]
     public void Unrated_item_has_no_mine_and_no_aggregate()
     {
         var dto = _f.Service.GetItemRating(_f.Alice.Id, Guid.NewGuid());

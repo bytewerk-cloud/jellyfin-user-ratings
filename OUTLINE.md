@@ -87,6 +87,13 @@ jellyfin-web has no official extension point. Options:
 
 **Decided: 1** (File Transformation plugin). Option 3 stays the fallback if that plugin stops being maintained.
 
+Verified jellyfin-web 12.4 DOM hooks (headless Chrome, 2026-11-23):
+- Header is a React MUI app bar: links live in `.MuiToolbar-root .MuiStack-root` (Favourites = `a[href="#/home?tab=1"]`). Narrow screens: `.MuiDrawer-paper` list. Legacy `.skinHeader .headerRight` kept as fallback.
+- Detail page: `.itemDetailPage:not(.hide) .detailPagePrimaryContent` (the `.detailRibbon` has a fixed height, so the widget goes below it).
+- Cards: `.card[data-id]` → `.cardScalable` (React and legacy cards). Indicators are top-right, badge goes top-left.
+- Unknown routes (`#/ducks-reviews`) render `#fallbackPage` and keep the URL; the script takes that page over.
+- `window.ApiClient.ajax` handles auth; errors reject with the fetch `Response`.
+
 Client script responsibilities:
 - Detect route changes (`viewshow` event / hash change) and act on the item detail page.
 - Detail page: duck widget (click/tap halves, keyboard accessible), "Write a review" expander with title + body, own rating, aggregate "★ 3.5 ducks · 12 ratings".
@@ -110,7 +117,8 @@ jellyfin-ratings/
 │  ├─ Api/                        # controller + DTOs
 │  ├─ Tasks/                      # backup, relink orphans
 │  └─ Web/ducks.js, ducks.css     # embedded resources
-├─ tests/Jellyfin.Plugin.Ducks.Tests/
+├─ tests/Jellyfin.Plugin.Ducks.Tests/  # xUnit + Moq, coverage gate 100% lines
+├─ tests/web/                         # node:test + jsdom for ducks.js, coverage gate 100% lines
 └─ docker/compose.yml             # local 12.4 test server
 ```
 
@@ -122,9 +130,9 @@ jellyfin-ratings/
 | 1 | Plugin skeleton builds against 12.4, loads in Docker test server | ✅ done |
 | 2 | SQLite repository + migrations + unit tests | ✅ done |
 | 3 | REST API + auth/access filtering + UserData mirror | ✅ done |
-| 4 | Script injection + detail-page widget (F1–F4) | ~3 h |
-| 5 | Card badges (F5) | ~2 h |
-| 6 | Reviews tab + feed page (F6–F7) | ~2 h |
+| 4 | Script injection + detail-page widget (F1–F4) | ✅ done |
+| 5 | Card badges (F5) | ✅ done |
+| 6 | Reviews tab + feed page (F6–F7) | ✅ done |
 | 7 | Durability: backups, orphan relink, upgrade test (12.4 → next) (F9) | ~2 h |
 | 8 | Packaging: `build.yaml`, repository manifest JSON for install via plugin catalog, README | ~1 h |
 
@@ -142,4 +150,6 @@ jellyfin-ratings/
 | 2026-11-23 | Script injection via File Transformation plugin (declared dependency) |
 | 2026-11-23 | Aggregates are per item; no roll-up from episodes/seasons into series |
 | 2026-11-23 | Feed shows every rating, newest first; text shown when present; edits update the entry (marked "edited"), not new entries |
+| 2026-11-23 | Full unit test coverage required (user request): `./test.sh` fails below 100% line coverage (C# and JS) |
+| 2026-11-23 | Folders, people, genres, studios, playlists are not ratable (API returns 404, widget hidden) |
 | 2026-11-23 | Distribution via GitHub-hosted plugin repository manifest (GitHub Releases + Pages) |

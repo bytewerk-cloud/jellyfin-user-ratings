@@ -6,3 +6,4 @@ docker/cache/
 .vs/
 *.user
 docker/media/
+node_modules/

@@ -1,1 +1,407 @@
-/* ducks */
+/* Ducks — ratings and reviews for jellyfin-web. Follows the active theme via inherited colors. */
+
+:root {
+    --ducks-accent: #f5c518;
+    --ducks-dim: rgba(255, 255, 255, 0.22);
+    --ducks-surface: rgba(255, 255, 255, 0.06);
+    --ducks-border: rgba(255, 255, 255, 0.14);
+    --ducks-muted: rgba(255, 255, 255, 0.6);
+}
+
+/* ---------- ducks row ---------- */
+
+.ducks {
+    display: inline-flex;
+    gap: 0.15em;
+    font-size: 1.5em;
+    line-height: 1;
+    vertical-align: middle;
+}
+
+.ducks-small {
+    font-size: 1.05em;
+}
+
+.duck {
+    position: relative;
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+}
+
+.duck svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.duck-bg {
+    fill: var(--ducks-dim);
+}
+
+.duck-fill {
+    fill: var(--ducks-accent);
+    clip-path: inset(0 100% 0 0);
+}
+
+.duck-half .duck-fill {
+    clip-path: inset(0 50% 0 0);
+}
+
+.duck-full .duck-fill {
+    clip-path: none;
+}
+
+/* ---------- detail page widget ---------- */
+
+.ducksWidget {
+    margin: 0 0 1.2em;
+    padding-bottom: 1em;
+    max-width: 42em;
+    border-bottom: 1px solid var(--ducks-border);
+}
+
+.ducksWidget-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.6em;
+    margin: 0.35em 0;
+}
+
+.ducksWidget-label {
+    min-width: 6.5em;
+    color: var(--ducks-muted);
+}
+
+.ducksPicker {
+    cursor: pointer;
+    border-radius: 0.3em;
+    padding: 0.1em;
+}
+
+.ducksPicker:focus-visible {
+    outline: 2px solid var(--ducks-accent);
+    outline-offset: 2px;
+}
+
+.ducks-unrated .duck-bg {
+    fill: var(--ducks-dim);
+}
+
+.ducksWidget-mine {
+    min-width: 1.5em;
+    font-weight: 600;
+}
+
+.ducksWidget-aggtext {
+    color: var(--ducks-muted);
+}
+
+.ducksZero {
+    font: inherit;
+    font-size: 0.8em;
+    color: var(--ducks-muted);
+    background: transparent;
+    border: 1px solid var(--ducks-border);
+    border-radius: 1em;
+    width: 1.9em;
+    height: 1.9em;
+    cursor: pointer;
+    padding: 0;
+}
+
+.ducksZero:hover,
+.ducksZero-active {
+    color: #000;
+    background: var(--ducks-accent);
+    border-color: var(--ducks-accent);
+}
+
+.ducksWidget-actions,
+.ducksForm-actions {
+    display: flex;
+    gap: 0.6em;
+    flex-wrap: wrap;
+    margin-top: 0.6em;
+}
+
+.ducksButton {
+    font: inherit;
+    color: inherit;
+    background: var(--ducks-surface);
+    border: 1px solid var(--ducks-border);
+    border-radius: 0.3em;
+    padding: 0.4em 0.9em;
+    cursor: pointer;
+}
+
+.ducksButton:hover {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.ducksButton-primary {
+    color: #000;
+    background: var(--ducks-accent);
+    border-color: var(--ducks-accent);
+}
+
+.ducksButton-primary:hover {
+    background: #ffd84d;
+}
+
+.ducksButton:disabled {
+    opacity: 0.6;
+    cursor: default;
+}
+
+.ducksForm {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    margin-top: 0.6em;
+}
+
+.ducksForm-title,
+.ducksForm-body {
+    font: inherit;
+    color: inherit;
+    background: var(--ducks-surface);
+    border: 1px solid var(--ducks-border);
+    border-radius: 0.3em;
+    padding: 0.5em 0.7em;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.ducksForm-body {
+    resize: vertical;
+    min-height: 6em;
+}
+
+.ducksForm-title:focus,
+.ducksForm-body:focus {
+    outline: none;
+    border-color: var(--ducks-accent);
+}
+
+.ducksMyReview {
+    margin-top: 0.6em;
+    padding: 0.6em 0.9em;
+    border-left: 3px solid var(--ducks-accent);
+    background: var(--ducks-surface);
+    border-radius: 0 0.3em 0.3em 0;
+}
+
+.ducksReviewTitle {
+    margin: 0 0 0.3em;
+    font-size: 1.05em;
+}
+
+.ducksReviewBody {
+    margin: 0;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.ducksMessage {
+    margin-top: 0.5em;
+    color: #ff8a80;
+}
+
+/* ---------- card badge (top-left of thumbnails) ---------- */
+
+.ducksBadge {
+    position: absolute;
+    top: 0.4em;
+    left: 0.4em;
+    z-index: 3;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25em;
+    padding: 0.15em 0.45em 0.15em 0.3em;
+    border-radius: 1em;
+    font-size: 0.85em;
+    font-weight: 600;
+    line-height: 1.4;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.72);
+    pointer-events: none;
+}
+
+.ducksBadge-icon {
+    width: 1.1em;
+    height: 1.1em;
+    fill: var(--ducks-accent);
+}
+
+/* ---------- navigation ---------- */
+
+.ducksNavIcon {
+    width: 1.25em;
+    height: 1.25em;
+    fill: currentColor;
+}
+
+.ducksNavLink .MuiButton-startIcon {
+    display: inherit;
+    margin-left: -4px;
+    margin-right: 8px;
+}
+
+.ducksNav-active {
+    color: var(--ducks-accent) !important;
+}
+
+.ducksHeaderButton {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35em;
+    color: inherit;
+    text-decoration: none;
+    padding: 0 0.6em;
+}
+
+@media (max-width: 50em) {
+    .ducksHeaderButton-text {
+        display: none;
+    }
+}
+
+/* ---------- reviews feed page ---------- */
+
+.ducksReviewsPage {
+    max-width: 52em;
+    margin: 0 auto;
+    padding-top: 1em;
+    padding-bottom: 3em;
+}
+
+.ducksReviewsPage-title {
+    margin: 0;
+}
+
+.ducksReviewsPage-sub {
+    margin: 0.3em 0 1.5em;
+    color: var(--ducks-muted);
+}
+
+.ducksFeedEntry {
+    display: flex;
+    gap: 1em;
+    padding: 1em 0;
+    border-bottom: 1px solid var(--ducks-border);
+}
+
+.ducksFeedPoster {
+    flex: 0 0 4.5em;
+    height: 6.75em;
+    border-radius: 0.3em;
+    overflow: hidden;
+    background: var(--ducks-surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ducksFeedPoster img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.ducksFeedPoster-placeholder {
+    width: 50%;
+    height: 50%;
+    fill: var(--ducks-dim);
+}
+
+.ducksFeedBody {
+    flex: 1;
+    min-width: 0;
+}
+
+.ducksFeedMeta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4em;
+}
+
+.ducksAvatar {
+    width: 1.8em;
+    height: 1.8em;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.ducksAvatar-initial {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    background: var(--ducks-surface);
+    border: 1px solid var(--ducks-border);
+}
+
+.ducksFeedUser {
+    font-weight: 600;
+}
+
+.ducksFeedRated {
+    color: var(--ducks-muted);
+}
+
+.ducksFeedItem {
+    color: inherit;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.ducksFeedItem:hover {
+    text-decoration: underline;
+}
+
+.ducksFeedRating {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5em;
+    margin: 0.4em 0;
+    color: var(--ducks-muted);
+}
+
+.ducksFeedRating .ducks {
+    font-size: 1.1em;
+}
+
+.ducksFeedScore {
+    color: inherit;
+    font-weight: 600;
+}
+
+.ducksEdited {
+    font-style: italic;
+}
+
+.ducksFeedFooter {
+    text-align: center;
+    margin-top: 1.5em;
+}
+
+.ducksEmpty {
+    color: var(--ducks-muted);
+}
+
+@media (max-width: 40em) {
+    .ducksWidget-row {
+        gap: 0.4em 0.6em;
+    }
+
+    .ducksWidget-label {
+        flex-basis: 100%;
+        min-width: 0;
+        font-size: 0.9em;
+    }
+}
