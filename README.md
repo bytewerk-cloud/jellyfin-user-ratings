@@ -13,7 +13,7 @@ It requires **Jellyfin 12.4** and the **File Transformation** plugin, which load
 
 1. In Jellyfin, open **Dashboard → Plugins → Repositories**.
 2. Add the File Transformation repository: `https://www.iamparadox.dev/jellyfin/plugins/manifest.json`
-3. Add the Ducks repository: `https://raw.githubusercontent.com/<owner>/<repo>/master/manifest.json`
+3. Add the Ducks repository: `https://raw.githubusercontent.com/bytewerk-cloud/jellyfin-user-ratings/master/manifest.json`
 4. Under **Catalog**, install **File Transformation** and then **Ducks**.
 5. Restart Jellyfin, then reload the browser tab.
 
@@ -32,6 +32,7 @@ To confirm it worked, open **Dashboard → Plugins → Ducks**. The Status secti
 - The Ducks database is the source of truth.
 
 **Restore a backup:**
+
 1. Stop Jellyfin.
 2. Copy a backup over `data/ducks/ducks.db`.
 3. Delete any `ducks.db-wal` and `ducks.db-shm` files next to it.
