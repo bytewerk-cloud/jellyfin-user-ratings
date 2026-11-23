@@ -50,8 +50,6 @@ internal static class Migrations
         """
     ];
 
-    public static int LatestVersion => Steps.Count;
-
     public static void Apply(DucksRepository repository)
     {
         using var connection = repository.Open();

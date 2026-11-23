@@ -217,21 +217,6 @@ public sealed class DucksRepository
         return ReadAll(cmd);
     }
 
-    public IReadOnlyList<Guid> GetDistinctItemIds()
-    {
-        using var connection = Open();
-        using var cmd = connection.CreateCommand();
-        cmd.CommandText = "SELECT DISTINCT ItemId FROM Reviews";
-        using var reader = cmd.ExecuteReader();
-        var ids = new List<Guid>();
-        while (reader.Read())
-        {
-            ids.Add(Guid.Parse(reader.GetString(0)));
-        }
-
-        return ids;
-    }
-
     /// <summary>
     /// Moves all reviews from an item id that no longer exists to its replacement.
     /// If a user already rated the new item, their newer row wins and the older one goes to history.

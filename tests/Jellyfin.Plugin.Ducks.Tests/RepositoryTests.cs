@@ -226,4 +226,39 @@ public sealed class RepositoryTests : IDisposable
         Assert.Equal("newer local", other.Get(Alice, Movie)!.Title);
         Assert.Equal("b", other.Get(Bob, Movie)!.Title);
     }
+
+    [Theory]
+    [InlineData(-1)]
+    [InlineData(9)]
+    public void Upsert_rejects_out_of_range_half_ducks(int halfDucks)
+        => Assert.Throws<ArgumentOutOfRangeException>(() => _repo.Upsert(Alice, Movie, halfDucks, null, null, Snap()));
+
+    [Fact]
+    public void Aggregates_of_no_ids_is_empty()
+        => Assert.Empty(_repo.GetAggregates([]));
+
+    [Fact]
+    public void Relink_conflict_where_orphan_is_newer_moves_orphan_and_archives_existing()
+    {
+        var newMovie = Guid.NewGuid();
+        _repo.Upsert(Alice, newMovie, 2, "stale", null, Snap(), T0);
+        _repo.Upsert(Alice, Movie, 8, "fresh", null, Snap(), T0.AddDays(1));
+
+        Assert.Equal(1, _repo.Relink(Movie, newMovie));
+
+        Assert.Equal("fresh", _repo.Get(Alice, newMovie)!.Title);
+        Assert.Equal(1, _repo.CountHistory());
+    }
+
+    [Fact]
+    public void Import_over_older_row_archives_it()
+    {
+        _repo.Upsert(Alice, Movie, 2, "old", null, Snap(), T0);
+        var newer = new Review { UserId = Alice, ItemId = Movie, HalfDucks = 6, Title = "imported", CreatedUtc = T0, UpdatedUtc = T0.AddDays(1) };
+
+        Assert.Equal(1, _repo.Import([newer]));
+
+        Assert.Equal("imported", _repo.Get(Alice, Movie)!.Title);
+        Assert.Equal(1, _repo.CountHistory());
+    }
 }

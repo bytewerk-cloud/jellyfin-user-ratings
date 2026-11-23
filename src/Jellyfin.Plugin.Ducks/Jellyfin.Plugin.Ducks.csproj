@@ -24,6 +24,8 @@
   <ItemGroup>
     <None Remove="Configuration\configPage.html" />
     <EmbeddedResource Include="Configuration\configPage.html" />
+    <EmbeddedResource Include="Web\ducks.js" />
+    <EmbeddedResource Include="Web\ducks.css" />
   </ItemGroup>
 
 </Project>

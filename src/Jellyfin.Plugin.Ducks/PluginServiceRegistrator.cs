@@ -1,3 +1,4 @@
+using Jellyfin.Plugin.Ducks.Injection;
 using Jellyfin.Plugin.Ducks.Services;
 using MediaBrowser.Controller;
 using MediaBrowser.Controller.Plugins;
@@ -13,5 +14,6 @@ public class PluginServiceRegistrator : IPluginServiceRegistrator
     public void RegisterServices(IServiceCollection serviceCollection, IServerApplicationHost applicationHost)
     {
         serviceCollection.AddSingleton<DucksService>();
+        serviceCollection.AddHostedService<WebInjectionService>();
     }
 }
