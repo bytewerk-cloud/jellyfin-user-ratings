@@ -109,6 +109,15 @@ public class DucksController : ControllerBase
         return _service.GetFeed(CurrentUserId(), cursor, limit);
     }
 
+    /// <summary>Admin: health of the plugin (web injection, database, backups).</summary>
+    [HttpGet("Status")]
+    [Authorize(Policy = "RequiresElevation")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public ActionResult<StatusDto> Status()
+    {
+        return _service.GetStatus(Injection.WebInjectionService.IsRegistered);
+    }
+
     /// <summary>Admin: full export of all current ratings (JSON). History is kept in the database only.</summary>
     [HttpGet("Export")]
     [Authorize(Policy = "RequiresElevation")]

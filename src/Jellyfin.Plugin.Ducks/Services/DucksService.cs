@@ -53,7 +53,8 @@ public sealed class DucksService
 
     public DucksRepository Repository => _repository.Value;
 
-    private static Configuration.PluginConfiguration Config => Plugin.Instance?.Configuration ?? new Configuration.PluginConfiguration();
+    /// <summary>Gets the current settings, or defaults when the plugin isn't loaded (tests, early startup).</summary>
+    public static Configuration.PluginConfiguration Config => Plugin.Instance?.Configuration ?? new Configuration.PluginConfiguration();
 
     /// <summary>
     /// Item types that are containers or metadata, not media, and so can't be rated.
@@ -197,6 +198,22 @@ public sealed class DucksService
             ? null
             : DucksRepository.ToUnixMs(lastScanned.CreatedUtc).ToString(CultureInfo.InvariantCulture) + "_" + lastScanned.Id.ToString(CultureInfo.InvariantCulture);
         return page;
+    }
+
+    public StatusDto GetStatus(bool webInjectionActive)
+    {
+        var folder = Path.Combine(DataDirectory, "backups");
+        var latest = Directory.Exists(folder)
+            ? Directory.GetFiles(folder, "ducks-????????.db").OrderByDescending(f => Path.GetFileName(f), StringComparer.Ordinal).FirstOrDefault()
+            : null;
+        return new StatusDto
+        {
+            Version = Plugin.Instance?.Version.ToString(),
+            WebInjectionActive = webInjectionActive,
+            DatabasePath = Repository.DatabasePath,
+            RatingCount = Repository.GetAll().Count,
+            LatestBackup = latest is null ? null : Path.GetFileName(latest)
+        };
     }
 
     /// <summary>

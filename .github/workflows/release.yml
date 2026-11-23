@@ -1,0 +1,56 @@
+# Push a tag like v0.3.0.0 (or v0.3.0) to publish a release.
+# The tag message becomes the changelog. manifest.json on master is the plugin repository users add to Jellyfin:
+#   https://raw.githubusercontent.com/<owner>/<repo>/master/manifest.json
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Unit tests
+        run: ./test.sh
+
+      - name: Package
+        id: package
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          while [ "$(echo "$VERSION" | tr -cd . | wc -c)" -lt 3 ]; do VERSION="$VERSION.0"; done
+          CHANGELOG="$(git tag -l --format='%(contents)' "$GITHUB_REF_NAME" | sed '/^-----BEGIN/,$d')"
+          [ -n "$CHANGELOG" ] || CHANGELOG="Release $GITHUB_REF_NAME"
+          git show origin/master:manifest.json > manifest.json 2>/dev/null || echo '[]' > manifest.json
+          scripts/package.sh "$VERSION" "https://github.com/${GITHUB_REPOSITORY}/releases/download/${GITHUB_REF_NAME}" "$CHANGELOG"
+          cp manifest.json "$RUNNER_TEMP/manifest.json"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/ducks_${{ steps.package.outputs.version }}.zip
+
+      - name: Publish manifest.json to master
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -f master
+          git pull --ff-only origin master
+          cp "$RUNNER_TEMP/manifest.json" manifest.json
+          git add manifest.json
+          git commit -m "Publish Ducks ${{ steps.package.outputs.version }} to plugin repository"
+          git push origin master

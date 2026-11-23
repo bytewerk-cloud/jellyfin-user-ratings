@@ -618,9 +618,15 @@
             added++;
         }
 
-        // Legacy layout header (no React app bar).
+        // Legacy layout header (no React app bar). The legacy header can exist briefly before the
+        // app bar renders, so drop its button once the app bar is there.
         var legacy = doc.querySelector('.skinHeader .headerRight');
-        if (!bar && legacy && !legacy.querySelector('.ducksHeaderButton')) {
+        var legacyButton = legacy ? legacy.querySelector('.ducksHeaderButton') : null;
+        if (bar && legacyButton) {
+            legacyButton.remove();
+        }
+
+        if (!bar && legacy && !legacyButton) {
             legacy.insertAdjacentHTML('afterbegin', '<a href="' + REVIEWS_ROUTE + '" class="headerButton headerButtonRight ducksHeaderButton" title="Reviews">'
                 + NAV_ICON + '<span class="ducksHeaderButton-text">Reviews</span></a>');
             added++;

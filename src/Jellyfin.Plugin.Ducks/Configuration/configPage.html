@@ -8,6 +8,7 @@
     <div id="DucksConfigPage" data-role="page" class="page type-interior pluginConfigurationPage" data-require="emby-input,emby-button">
         <div data-role="content">
             <div class="content-primary">
+                <div id="DucksStatus" class="verticalSection" style="margin-bottom:2em"></div>
                 <form id="DucksConfigForm">
                     <div class="inputContainer">
                         <input is="emby-input" type="number" id="MaxTitleLength" min="1" max="500" label="Max review title length" />
@@ -26,8 +27,28 @@
             var DucksConfig = { pluginUniqueId: '6f3c2b1e-8d4a-4c7e-9b2f-d0c5a1e4f7b3' };
             var fields = ['MaxTitleLength', 'MaxBodyLength', 'BackupsToKeep'];
 
+            function esc(s) {
+                var d = document.createElement('div');
+                d.textContent = s == null ? '' : String(s);
+                return d.innerHTML;
+            }
+
+            function showStatus(status) {
+                var html = '<h2 class="sectionTitle">Status</h2>';
+                html += status.WebInjectionActive
+                    ? '<p>✅ Web UI active (File Transformation plugin found).</p>'
+                    : '<p style="color:#ff8a80">⚠️ Web UI not active: install the <b>File Transformation</b> plugin '
+                      + '(repository <code>https://www.iamparadox.dev/jellyfin/plugins/manifest.json</code>) and restart Jellyfin. '
+                      + 'Ratings already saved are safe.</p>';
+                html += '<p>Ratings stored: <b>' + esc(status.RatingCount) + '</b></p>';
+                html += '<p>Database: <code>' + esc(status.DatabasePath) + '</code></p>';
+                html += '<p>Latest backup: ' + (status.LatestBackup ? '<code>' + esc(status.LatestBackup) + '</code>' : 'none yet (runs daily at 03:00)') + '</p>';
+                document.querySelector('#DucksStatus').innerHTML = html;
+            }
+
             document.querySelector('#DucksConfigPage').addEventListener('pageshow', function () {
                 Dashboard.showLoadingMsg();
+                ApiClient.ajax({ type: 'GET', url: ApiClient.getUrl('Ducks/Status'), dataType: 'json' }).then(showStatus);
                 ApiClient.getPluginConfiguration(DucksConfig.pluginUniqueId).then(function (config) {
                     fields.forEach(function (f) { document.querySelector('#' + f).value = config[f]; });
                     Dashboard.hideLoadingMsg();

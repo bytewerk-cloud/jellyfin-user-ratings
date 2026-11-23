@@ -99,3 +99,17 @@ public sealed class FeedPageDto
     /// <summary>Gets or sets the opaque cursor for the next page; null when there are no more entries.</summary>
     public string? Next { get; set; }
 }
+
+public sealed class StatusDto
+{
+    public string? Version { get; set; }
+
+    /// <summary>Gets or sets a value indicating whether the web UI script is being injected (File Transformation present).</summary>
+    public bool WebInjectionActive { get; set; }
+
+    public string DatabasePath { get; set; } = string.Empty;
+
+    public int RatingCount { get; set; }
+
+    public string? LatestBackup { get; set; }
+}

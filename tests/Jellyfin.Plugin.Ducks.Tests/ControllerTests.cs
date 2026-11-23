@@ -103,6 +103,23 @@ public sealed class ControllerTests : IDisposable
     }
 
     [Fact]
+    public void Status_reports_database_count_and_backups()
+    {
+        var movie = _f.AddItem(ServiceFixture.Movie());
+        As(_f.Alice.Id).SaveItem(movie.Id, new SaveRatingRequest { Rating = 3 });
+
+        var before = As(_f.Alice.Id).Status().Value!;
+        Assert.Equal(1, before.RatingCount);
+        Assert.Null(before.LatestBackup);
+        Assert.EndsWith("ducks.db", before.DatabasePath, StringComparison.Ordinal);
+
+        _f.Service.CreateBackup(new DateTime(2026, 5, 1, 0, 0, 0, DateTimeKind.Utc), 7);
+        _f.Service.CreateBackup(new DateTime(2026, 5, 2, 0, 0, 0, DateTimeKind.Utc), 7);
+        Assert.Equal("ducks-20260502.db", As(_f.Alice.Id).Status().Value!.LatestBackup);
+        Assert.True(_f.Service.GetStatus(true).WebInjectionActive);
+    }
+
+    [Fact]
     public void Import_rejects_out_of_range_ratings()
     {
         var bad = new List<Review> { new() { UserId = Guid.NewGuid(), ItemId = Guid.NewGuid(), HalfDucks = 9 } };

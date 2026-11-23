@@ -46,6 +46,16 @@ test('legacy layout gets a header button; it is skipped when the app bar exists'
     assert.equal(both.doc.querySelector('.ducksHeaderButton'), null);
 });
 
+test('legacy button added before the app bar rendered is removed once it appears', () => {
+    const { doc } = dom(markup.legacyHeader);
+    ducks.ensureNavLinks(doc, false);
+    assert.ok(doc.querySelector('.ducksHeaderButton'));
+    doc.body.insertAdjacentHTML('beforeend', markup.appBar);
+    ducks.ensureNavLinks(doc, false);
+    assert.equal(doc.querySelector('.ducksHeaderButton'), null);
+    assert.ok(doc.querySelector('.ducksNavLink'));
+});
+
 test('active state toggles on and off', () => {
     const { doc } = dom(markup.appBar);
     ducks.ensureNavLinks(doc, true);

@@ -136,12 +136,19 @@ jellyfin-ratings/
 | 5 | Card badges (F5) | ✅ done |
 | 6 | Reviews tab + feed page (F6–F7) | ✅ done |
 | 7 | Durability: backups, orphan relink, upgrade test (12.4 → next) (F9) | ✅ done |
-| 8 | Packaging: `build.yaml`, repository manifest JSON for install via plugin catalog, README | ~1 h |
+| 8 | Packaging: `build.yaml`, repository manifest JSON for install via plugin catalog, README | ✅ done |
 
 ## 6. Open questions
 
 - **Q2** Reviews feed visibility: assumed all users see everyone's reviews with usernames. Admin toggle to hide names later?
 - **Q4** Assumed a rating of exactly 0 ducks is allowed and distinct from "not rated".
+
+## 6b. Remaining (needs the user)
+
+- Create the GitHub repository, push `master`, replace `<owner>/<repo>` in README, then tag `v0.3.0.0` to publish the first release.
+- Install on the real server (File Transformation + Ducks via repository URLs), then run the e2e smoke test against it.
+
+Verified on 2026-11-23 with a throwaway 12.4 container: install from a repository URL, then update 0.2 → 0.3 through the repository (plugin folder replaced, data kept).
 
 ## 7. Decisions log
 
@@ -154,4 +161,5 @@ jellyfin-ratings/
 | 2026-11-23 | Feed shows every rating, newest first; text shown when present; edits update the entry (marked "edited"), not new entries |
 | 2026-11-23 | Full unit test coverage required (user request): `./test.sh` fails below 100% line coverage (C# and JS) |
 | 2026-11-23 | Folders, people, genres, studios, playlists are not ratable (API returns 404, widget hidden) |
+| 2026-11-23 | Admin status block on the plugin settings page warns when File Transformation is missing |
 | 2026-11-23 | Distribution via GitHub-hosted plugin repository manifest (GitHub Releases + Pages) |

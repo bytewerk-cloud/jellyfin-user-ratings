@@ -29,8 +29,7 @@ public class BackupTask : IScheduledTask
 
     public Task ExecuteAsync(IProgress<double> progress, CancellationToken cancellationToken)
     {
-        var keep = Plugin.Instance?.Configuration.BackupsToKeep ?? 7;
-        _service.CreateBackup(DateTime.UtcNow, keep);
+        _service.CreateBackup(DateTime.UtcNow, DucksService.Config.BackupsToKeep);
         progress.Report(100);
         return Task.CompletedTask;
     }
