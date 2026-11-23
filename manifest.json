@@ -1,0 +1,20 @@
+[
+  {
+    "guid": "6f3c2b1e-8d4a-4c7e-9b2f-d0c5a1e4f7b3",
+    "name": "Ducks",
+    "description": "Rate anything 0-4 ducks and write short reviews. Requires the File Transformation plugin.",
+    "overview": "Adds user ratings (0 to 4 ducks, half ducks allowed) and optional short reviews to every movie, show, season and episode. Shows your rating and everyone's average on the details page, an average badge on posters, and a Reviews tab with a feed of all reviews. Data lives in Jellyfin's data folder with daily backups, so it survives server and plugin updates.",
+    "owner": "jellyfin-ratings",
+    "category": "General",
+    "versions": [
+      {
+        "version": "0.3.0.0",
+        "changelog": "Update README",
+        "targetAbi": "12.4.0.0",
+        "sourceUrl": "https://github.com/bytewerk-cloud/jellyfin-user-ratings/releases/download/v0.3.0.0/ducks_0.3.0.0.zip",
+        "checksum": "2b26787a53fcbf7540feb9b761743938",
+        "timestamp": "2026-11-23T17:38:56Z"
+      }
+    ]
+  }
+]
